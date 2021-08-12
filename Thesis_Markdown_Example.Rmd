@@ -1,0 +1,465 @@
+---
+title: "Thesis Walkthrough"
+author: "André Price"
+date: "11/4/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+###Load Data###
+rm(list=ls(all=TRUE)) 
+setwd("~/Desktop/MasterR")
+diets.original <- read.csv("Working_United.csv")
+setwd("~/Desktop/MasterR")
+isotope.original <- read.csv("isotopedata.csv")
+```
+```{r packages, include=FALSE}
+##Needed installations
+##install.packages(c("FSA","SIBER", "FSAdata", "ggrepel", "nlstools", "plotrix", "Rmisc", "siar", "tidyverse"))
+
+###Packages##
+#library(SIBER)
+library(dplyr)
+library(ggplot2) 
+library(tidyverse)
+library(Rmisc)
+library(gridExtra)
+```
+```{r wrangling, include=FALSE}
+
+###Wrangle the Data####
+colnames(diets.original)
+colnames(diets.original)=c( "fishid","svspp","cruise6","station","pdsex","pdid","pdlen","pdwgt",   
+                            "sizecat","pdgutw","pdgutv","fhdat","stratum","beglat","beglon","declat",  
+                            "declon","month","day","year","purcode","season","geoarea","pynam",
+                            "gencat","gensci","analcat","analsci","collcat","collsci","pynum","pyamtw",  
+                            "pyamtv","pdscinam" ,"pdcomnam","location")
+
+colnames(isotope.original)
+colnames(isotope.original)=c("year", "month", "fishid", "c13l","n15l","c13m","n15m","c13s",    
+                             "n15s","location","len","weight","sex","age","consumer")
+isotopes_for_merge <- isotope.original[1:407, 1:14]
+
+master_df <- merge(diets.original, isotopes_for_merge, by=c("fishid"), all.x = T)
+colnames(master_df)
+
+master_df <- select(master_df, -(contains(".y")))
+master_df <- rename(master_df, c("year.x" = "year", "location.x"="location", "month.x"="month"))
+
+```
+```{r wrangling1.5, include=FALSE, echo=FALSE}
+###Looking at MY data only
+basics <-(master_df[master_df$location!="",])
+basics <- basics[!duplicated(basics$fishid), ]
+basics$location_type<- ifelse(basics$location=="NB_ONE", "N",
+                              ifelse(basics$location=="NB_TWO","N","A"))
+
+```
+
+
+```{r wrangling2, include=FALSE}
+basics.n <- subset(master_df,select = -c(2:3,6,12:13,37:42))
+basics.n$source <- ifelse(basics.n$geoarea=="", "ANDRE", "NOAA")
+basics.n <- basics.n[!duplicated(basics.n$fishid), ]
+
+##Reassign sex
+basics.n$pdsex[basics.n$pdsex=="U"] <- "4"  #For mine, "U" meant trans
+basics.n$pdsex[basics.n$pdsex=="F"] <- "2"
+basics.n$pdsex[basics.n$pdsex=="M"] <- "1"
+basics.n$pdsex[basics.n$pdsex=="4"] <- "4"  ### Becasue five NOAA fish were sexed as "4"
+basics.n$pdsex[basics.n$pdsex==""] <- "0" ##Because it's still unknown
+
+basics.n$sex.x <- ifelse(basics.n$pdsex == 0, 'Unknown',
+                         ifelse(basics.n$pdsex == 1, 'Male',
+                                ifelse(basics.n$pdsex == 2, 'Female',
+                                       ifelse(basics.n$pdsex == 4, 'Trans', NA)))) #%>% 
+transform(basics.n,sex.x=factor(basics.n$sex.x,levels=c("Unknown", "Female","Trans", "Male")))
+
+##Then, either change or leave this
+table(basics.n$pdsex, basics.n$source)
+###Make a year deletion###
+table(basics.n$year,basics.n$source)
+basics.n <- basics.n[basics.n$year!="2017",]  
+###NOAA data ends in 2016; I only had 10 unreliable samples in 2017
+basics.n <- select(basics.n,-(sex))
+basics.n <- rename(basics.n,c("sex.x" = "sex"))
+#basics.n <- basics.n[basics.n$sex=="0"|basics.n$sex=="1"|basics.n$sex=="2"|basics.n$sex=="3",] 
+basics.n$sizecat[basics.n$len<=25] <- "S"
+basics.n$sizecat[basics.n$len>25] <- "M"
+basics.n$sizecat[basics.n$len>50] <- "L"
+
+##Location Type
+basics.n$location_type<- ifelse(basics.n$location=="NB_ONE", "N",
+                                ifelse(basics.n$location=="NB_TWO","N","A"))
+##True age
+basics.n$true_age<- ((basics.n$age)+((basics.n$mon-4)/12))
+basics.n$true_age <- round(basics.n$true_age, digits = 4)
+
+##I want to look at local MAB fish - None are caught in Winter anyway
+basics.n <- filter(basics.n, geoarea=="MAB"| geoarea=="", year>2000)  ##last 10 years
+basics.n <- filter(basics.n,season!="WINTER")
+basics.n <-basics.n%>%mutate(Lati=trunc(beglat/100) + ((beglat-(trunc(beglat/100)*100))/100)*1.66 ) %>%
+  mutate(Long=trunc(beglon/100)+ ((beglon-(trunc(beglon/100)*100))/100)*1.66) %>%
+  mutate(Long=Long*-1)
+table(basics.n$season)
+table(basics.n$geoarea)
+```
+This working document that serves as a walkthough of my graduate thesis.
+
+This study examines the trophic dynamics of 407 BSB sampled from natural and artificial reefs near Ocean City, MD, during 2016 and 2018 using hook-and-line angling.  Stomach content analyses indicate that crustaceans (primarily _Cancer borealis_ and _C. irroratus_) dominate diets of BSB at both natural and artificial reef types by proportion and by frequency of occurrence. Analysis of stable isotope ratios (∂^12^C/∂^13^C and ∂^14^N/∂^15^N) from three tissue types (i.e., liver, muscle, and mucus) showed that reef type had a significant effect on stable isotope values in all tissues except for ∂^15^N in mucus.  Across tissues types, fish at artificial sites showed slightly higher ∂^13^C values, indicative of littoral feeding. Different tissues vary in temporal integration, but differences in stable isotopes could not be attributed to definitive, consistent prey items. No significant differences in length, age, or sex ratios existed between reef types, indicating that the sorting of these characters was not the source of differences in stable isotopes. Gut content analysis shows that natural and artificial reefs are ecologically equivalent for BSB caught near Ocean City, MD, however, differences in stable isotopes suggests this is a more sensitive method that should be investigated further.
+
+
+Here's a summary of the mean sizes of fish that were sampled
+
+```{r summary of sizes, include=TRUE,warning=FALSE, echo=FALSE}
+summarySE(basics.n, measurevar="pdlen", groupvars=c("source", "sex"), na.rm=TRUE)
+
+```
+
+This plot shows sample origin and quantity, and sex proportion.  This plot shows that females were most abundant, while males grew to an overall larger size.
+```{r figure2, include=TRUE,warning=FALSE, echo=FALSE}
+plot1a <- qplot(x=pdlen,y=..count../sum(..count..), data =basics.n[basics.n$source=="ANDRE",],
+                geom = "histogram", binwidth = 0.5, fill=sex)+
+  labs(x="Total Length (cm)", y="Proportion", col="Sex")+ggtitle("Length Frequencies of Black Sea Bass", subtitle = "A (n=407)")+
+  theme(plot.title = element_text(hjust = 0.5))+xlim(0,60)
+plot1a <- plot1a+scale_fill_manual(values=c("tomato1","dodgerblue4","aquamarine4" ,"grey48"), 
+                                   name="Sex",labels=c("Female", "Male", "Trans", "Unknown"))
+
+plot1b <- qplot(x=pdlen,y=..count../sum(..count..), data =basics.n[basics.n$source=="NOAA",],
+                geom = "histogram", binwidth = 0.5, fill=sex)+
+  labs(x="Total Length (cm)", y="Proportion", col="Sex")+ggtitle(NULL, subtitle = "B (n=1304)")+
+  theme(plot.title = element_text(hjust = 0.5))+ylim(0,.100)
+plot1b <- plot1b+scale_fill_manual(values=c("tomato1","dodgerblue4","aquamarine4" ,"grey48"), 
+                                   name="Sex",labels=c("Female", "Male", "Trans", "Unknown"))
+
+fig2 <- grid.arrange(plot1a, plot1b)
+```
+
+
+Quickly moving forward, I also looked at fish size at age and constructed an age-length key.  The base of this code was created by Derek Ogle, and I tailored it to fit my data. The regression analyses will be shown here.
+
+```{r agelenth_regression, include=TRUE, echo=FALSE}
+#REGRESSION
+agelength <-basics
+agelength.lm <- lm(len~age, data=agelength) #regression of the data
+coefs <- coef(agelength.lm) #gives you the intercept and slope
+#for every unit increase in age, the model predicts a unit increase in total length
+
+summary(agelength.lm) #summary of the regression
+pt(coefs[[1]]/coefs[[2]], df=279, lower.tail=FALSE) #this was on an old regression hw, not sure if needed
+#based on the t-test (and regression summary), the regression slope is statistically different from zero (p-value <0.001)
+
+confint(agelength.lm)[2,] #confidence interval
+
+summary(agelength.lm)$r.square #how much variation in abundance the linear regression model explains
+#it explains 52% of the variation. Should consider other explanations for large variation in total length.
+
+#REGRESSION PLOT
+
+age_plot_1 <- ggplot(data=agelength, aes(age, len)) + 
+  geom_point(aes(color=sex)) +
+  stat_smooth(method = "lm", col = "black") + labs(x="Fish Age (years)",
+                                                   y="Total Fish Length (cm)",
+                                                   colour="Sex")+
+  scale_color_manual(values=c("tomato1","dodgerblue4","grey48"),labels=c("Female", "Male","Trans"))+
+  ggtitle("Age-Length Regression by Sex")+theme(plot.title = element_text(hjust = 0.5))
+
+age_plot_1
+# fig.name <- paste("Age-length.png")
+# dev.copy(png, fig.name, 500, 500);dev.off()
+
+#QQPLOT
+qqnorm(rstandard(agelength.lm))
+qqline(rstandard(agelength.lm))
+
+#RESIDUALS VS FITTED
+plot(agelength.lm,1)
+abline(h=c(-2,0,2),lty=3,col="grey60")
+
+#COOKs DISTANCE
+plot(agelength.lm,4)  ## all fish
+h=qf(0.5,2,50)
+
+##to remove the outliers
+rmoutlier <-agelength[-c(244, 521), ]
+rmoutlier.lm <- lm(len~age, data=rmoutlier)
+##Remove 244, 521 b/c they're outliers
+plot(rmoutlier.lm,4)
+```
+
+Then, I constructed an age-length key, which is shown here.
+```{r age_length_key, include=TRUE, echo=FALSE}
+#### Age-Length Key Construction  - Code from Derek Ogle ####
+##install.packages("FSAdata") -if needed
+library(magrittr)
+library(FSA)                                # for headtail(), alkPlot()
+library(FSAdata)                            # for SpotVA2 data
+library(dplyr)                              # for filter(), mutate()
+library(nnet)                               # for multinom()
+
+
+lenbrks <- seq(10,40,5)
+agelength <- mutate(agelength,lcat=lencat((len), breaks = lenbrks)) # nearest 5 cm
+headtail(agelength)
+
+( raw <- xtabs(~lcat+age,data=agelength) )
+( ALK.obs <- prop.table(raw,margin=1) )
+
+mlr <- multinom(age~lcat,data=agelength,maxit=500)
+
+minx <- min(agelength$len)
+maxx <- max(agelength$len)
+
+lens <- seq(10, 40,5) # plotting intervals
+ALK.sm <- predict(mlr,data.frame(lcat=lens),type="probs")
+row.names(ALK.sm) <- lens
+round(ALK.sm,3)
+
+alkPlot(ALK.obs,xlab="Total Length (cm)") 
+alkPlot(ALK.sm,xlab="Total Length (cm)") 
+
+alkPlot(ALK.sm,xlab="Total Length (cm)",pal="gray",showLegend=TRUE)
+alkPlot(ALK.sm,xlab="Total Length (cm)",pal="gray",showLegend=TRUE,type="area")
+
+alkPlot(ALK.sm,xlab="Total Length (cm)",pal="gray",type="lines")
+age_plot_2 <- alkPlot(ALK.sm, xlab="Total Length (cm)", ylab = "Age (years)",type="bubble", main="Black Sea Bass Length at Age", cex.main=2, cex.xlab=3, cex.ylab=3)
+#dev.copy(png,'Age_plot2.png', width=2000, height=1600, res=200) ; dev.off()
+
+### Age-length Key application
+
+agelength.mod <- alkIndivAge(ALK.obs,age~len,data=agelength)
+headtail(agelength.mod)
+
+agelength.comb <- rbind(agelength,agelength.mod)
+str(agelength.comb)
+
+agefreq <- xtabs(~age,data=agelength.comb)
+prop.table(agefreq)
+
+hist(~age,data=agelength.comb,breaks=0:6,xlab="Age (yrs)")
+
+( sp.sum <- Summarize(len~age,data=agelength.comb,digits=2) )
+plot(len~age,data=agelength.comb,ylab="Total Length (mm)",xlab="Age (yrs)",pch=16,col=rgb(0,0,0,0.1))
+lines(mean~age,data=sp.sum,col="blue",lwd=2)
+
+```
+
+This will show the PSIRI composition for the samples that I caught.
+These are not separated by site - natural and artificial sites are grouped here.
+```{r PSIRI Plots, include=TRUE, echo=FALSE}
+###############
+#####PSIRI PLOTS######
+############
+
+###PSIRI Plot ---for general prey composition
+##Use diet_test here b/c only looks at my data
+
+table(diet_test$gencat)
+
+with (diet_test, table (othergencat))
+ps.a <- select(diet_test, othergencat, pyamtw)
+aggregate(ps.a[, 2], list(ps.a$othergencat), sum)
+
+
+labels <- c("Annelli","Arthro","Fish","Mollus")
+##Actual number 
+N <- c(25, 125,24,59)
+##Actual weight
+W <- c(12.46,282,38.33,95.34)
+##Next lines are percent number and percent weight - divided by 233 sotmachs total
+N <- c(10.7, 53.6,10.3,25.3)
+##Next line is percent weight where total weight =428.13
+W <- c(2.9,65.9, 8.9,22.2)
+## n=233 and FO=ni/n
+FO <- c(0.107,.537,.103,0.253)
+
+#This generates the plot using the barplot function twice in R
+barplot(height=N,
+        width=FO,
+        ylim=c(-100,100),
+        space=0,
+        yaxt="n"
+)
+
+barplot(height=-1*W,
+        width=FO,
+        space=0,
+        yaxt="n",
+        add=TRUE)
+
+#Generate Y-axis with the axis function and label with the mtext function 
+axis(side=2,
+     at=seq(from=-100,to=100,by=25),
+     labels=c(seq(100,0,-25),seq(25,100,25))
+)
+
+mtext(c("%PN","%PW"),
+      side=2,
+      line=2,
+      at=c(50,-50)
+)
+
+#Generate FO scale bar -- this will not always be the same size from plot to plot unless you set the size of each barplot equal with par!!!
+center <- 0.5*sum(FO) #This is the center of the X-axis
+
+axis(side=1,
+     at=c(center-25,center,center+25),
+     labels=c(0,25,50)
+)
+
+mtext("%FO",
+      side=1,
+      line=2,
+      at=center)
+
+#Label the bars
+#This positions the labels over the middle of each bar
+#This may get ugly if there are many bars and labels!!!
+text(cumsum(FO) - 0.5*FO,N+5,srt= 90,adj=0,labels) 
+
+temp <- locator(1) # On the chart, click where you would like the text to appear
+text(temp,"General",srt= 90, font=2)
+
+dev.copy(png,'PSIRI_General.png', width=2000, height=1600, res=200) ; dev.off()
+
+
+```
+
+
+```{r stable_isotope_wrangling, include=TRUE, echo=FALSE }
+#########
+######Stable Isotopes######
+###########
+
+##Define Consumer level
+isotope.original$consumer_level<- ifelse(isotope.original$consumer=="BSB","2","1")
+
+##Define Location Type
+isotope.original$location_type<- ifelse(isotope.original$location=="NB_ONE", "N",
+                                        ifelse(isotope.original$location=="NB_TWO","N","A"))
+
+pred <- isotope.original[1:407,]
+prey <-isotope.original[408:440,]
+prey$c13m <-paste(prey$c13l)
+prey$c13s <-paste(prey$c13l)
+prey$n15m <-paste(prey$n15l)
+prey$n15s <-paste(prey$n15l)
+
+isotope <- rbind(pred, prey)
+colnames(isotope)
+
+#### Removes incomplete entries so means aren't affected
+isotope$isoname <- ifelse(isotope$consumer=="BSB","", paste(isotope$consumer))
+colnames(isotope)
+
+##Adds sizecat
+isotope$sizecat[isotope$len<=25] <- "S"
+isotope$sizecat[isotope$len>25] <- "M"
+isotope$sizecat[isotope$len>50] <- "L"
+
+isotope$isoname[isotope$isoname == "Slug"] <- "Nudibranch"
+
+isotope$c13m <- as.numeric(isotope$c13m)
+isotope$n15m <- as.numeric(isotope$n15m)
+isotope$c13m <-  as.numeric(isotope$c13m)
+isotope$c13s <- as.numeric(isotope$c13s)
+isotope$n15s <-  as.numeric(isotope$n15s)
+
+
+######Correcting livers for lipids
+colnames(isotope)
+lip_correct <- select(isotope, 1:19)
+colnames(lip_correct)
+
+
+lip_correct$isoratio_l <-(isotope$c13l)/(isotope$n15l)  ## Will give C:N ratio for liver when raw values added
+
+##Find means by tissue type
+##Will need to make data wide
+
+tissue.summary<- summarySE(lip_correct, measurevar="isoratio_l", groupvars=c("sizecat", "location_type"), na.rm=TRUE)
+
+
+###For Data Visuals###
+bsb <- isotope[isotope$consumer_level=="2",]
+bsb$losiz <- paste(bsb$location_type,"|",bsb$sizecat)
+
+bsb$c13m <- as.numeric(bsb$c13m)
+bsb$n15m <- as.numeric(bsb$n15m)
+bsb$c13l <-  as.numeric(bsb$c13l)
+bsb$n15l <-  as.numeric(bsb$n15l)
+bsb$c13s <- as.numeric(bsb$c13s)
+bsb$n15s <-  as.numeric(bsb$n15s)
+
+```
+```{r ellipses}
+
+
+elipse1 <- ggplot(bsb, aes(c13l, n15l, color=losiz))+labs(color="Location | Size")+
+  labs(x=(expression("∂"^13*"C (‰)")),y=(expression("∂"^15*"N (‰)")))+
+  geom_point() +stat_ellipse()+
+  ggtitle("∂ Values by Site Type, Fish Size, and Tissue Type", subtitle = "Liver")+
+  theme(plot.title = element_text(hjust = 0.5))+theme(axis.text=element_text(size=18),
+                                                      axis.title=element_text(size=18,face="bold"))+
+  theme(legend.text=element_text(size=14))+theme(legend.title=element_text(size=18))+
+  theme(plot.subtitle=element_text(size=18))#+ theme(legend.position = "none") 
+
+
+elipse2 <- ggplot(bsb, aes(c13m, n15m, color=losiz))+labs(color="Location | Size")+
+  labs(x=(expression("∂"^13*"C (‰)")),y=(expression("∂"^15*"N (‰)")))+
+  geom_point() +stat_ellipse()+
+  ggtitle("", subtitle = "Muscle")+
+  theme(plot.title = element_text(hjust = 0.5))+theme(axis.text=element_text(size=18),
+                                                      axis.title=element_text(size=18,face="bold"))+
+  theme(legend.text=element_text(size=14))+theme(legend.title=element_text(size=18))+
+  theme(plot.subtitle=element_text(size=18))+theme(legend.position = "none") 
+
+elipse3 <- ggplot(bsb, aes(c13s, n15s, color=losiz))+labs(color="Location | Size")+
+  labs(x=(expression("∂"^13*"C (‰)")),y=(expression("∂"^15*"N (‰)")))+
+  geom_point() +stat_ellipse()+
+  ggtitle("", subtitle = "Mucus")+
+  theme(plot.title = element_text(hjust = 0.5))+theme(axis.text=element_text(size=18),
+                                                      axis.title=element_text(size=18,face="bold"))+
+  theme(legend.text=element_text(size=14))+theme(legend.title=element_text(size=18))+
+  theme(plot.subtitle=element_text(size=18))
+
+isotopet <- grid.arrange(elipse1 , elipse2, elipse3, nrow=)
+#install.packages("ggpubr")
+library(ggpubr)
+ggarrange(elipse2, elipse1, elipse3,ncol=1, nrow=3,
+          common.legend = TRUE, legend = "right")
+```
+
+
+This will show a map of where samples were caught.  Samples were caught off the coast of MD, USA at natural and artifical sites.
+```{r figure1, include=TRUE, ECHO=FALSE, WARNING=FALSE}
+setwd("~/Desktop/MasterR")
+mapsites<- read.csv("site_coordinates.csv")
+mapsites$Long <- mapsites[, 2] + 0.006
+mapsites$latlong <- paste(mapsites$Site, "|", mapsites$Year)
+
+library(sf) 
+library(rnaturalearth) 
+library(rnaturalearthdata) 
+library(ggplot2)
+
+
+mapsites<- read.csv("site_coordinates.csv") 
+mapsites$Long <- mapsites[, 2] + 0.2
+mapsites$Year <- as.factor(mapsites$Year) 
+world <- ne_countries(scale = "medium", returnclass = "sf") 
+ggplot(data = world)+
+  geom_sf()+
+  geom_point(data= mapsites,aes(x = Long, y = Lat, color= Site, shape= Year))+
+  labs(x="Long", y="Lat", colour="Site Type", shape="Year")+ 
+  scale_color_manual(values=c("cyan3", "coral1"), 
+                     labels=c("Nat","Art"))+ 
+  scale_shape_manual(values=c(6,17))+
+  coord_sf(xlim = c(-77, -73), ylim = c(37, 39), expand = FALSE)+ 
+  annotate(geom = "text", x = -74.5, y = 37.25, label = "Atlantic Ocean", fontface = "italic", color = "grey22", size = 6)+ 
+  xlab("Longitude") + 
+  ylab("Latitude") + 
+  ggtitle("Sampling Locations in 2016 and 2018")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
