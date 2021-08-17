@@ -313,7 +313,7 @@ if (Fold){
   age_plot_nat <- alkPlot(ALK.sm, xlab="Total Length (cm)", ylab = "Age (years)",type="bubble", main="Black Sea Bass Length at Age - Natural", cex.main=2, cex.xlab=3, cex.ylab=3)
   #dev.copy(png,'AgeNat.png', width=2000, height=1600, res=200) ; dev.off()
   
-}##FoldPresentation section for agelength - extra plots if needed to be broken down by site type
+}##Fold Presentation section for agelength - extra plots if needed to be broken down by site type
 #######Von Bertalanffy with ANOVA####
 if(Fold){
   agelen <- agelength[!is.na(agelength$age),]
@@ -1024,6 +1024,10 @@ if (Fold){
   #dev.copy(png,'PSIRI_Artificial_2016.png', width=2000, height=1600, res=200) ; dev.off()
   
 } ##End Fold for PSIRI construction/ fig4, supp 1 & 2
+
+#save.image(file = "data/wrangeld_for_isotopes")
+#load(file = "data/wrangeld_for_isotopes")
+
 #######Stable Isotopes/ Figures 5 & 6####
 if (Fold){
   ##Define Consumer level
