@@ -1,5 +1,5 @@
 #Created by André Price
-#This script covers my MS thesis and creates plots if needed
+#This script covers my MS thesis analysis and creates plots if needed
 
 diets.original <- read.csv("data/Working_United.csv")
 isotope.original <- read.csv("data/isotopedata.csv")
@@ -38,14 +38,14 @@ if (Fold) {
 }##Fold Data Inputs - Does not include Figure 1 mapping data
 ######Wrangle the Data
 if (Fold) {
-  ##Add some extra columns, formatting and subsetting the data for basic data interrogation
+  # #Add some extra columns, formatting and subsetting the data for basic data interrogation
   # 
-  # ##This adds a "natural" or "artificial" designation  
+  # ##This adds a "natural" or "artificial" designation
   # basics <-(master_df[master_df$location!="",])
   # basics <- basics[!duplicated(basics$fishid), ]
   # basics$location_type<- ifelse(basics$location=="NB_ONE", "N",
   #                               ifelse(basics$location=="NB_TWO","N","A"))
-  
+  # 
   ##### INTRO  QUESTIONS -Comparing UMES and NOAA data#####
   ###Wrangling###
   basics.n <- subset(master_df,select = -c(2:3,6,12:13,37:42))
@@ -95,8 +95,11 @@ if (Fold) {
   table(basics.n$geoarea)  ##shows umes vs. noaa
   
 } ##Fold data wrangling
+#save.image(file="data/wrangled_for_results.Rdata")
 
 #######Results##
+
+#load("data/wrangled_for_results.Rdata")  ###use this line to load everything you'll need from above
 #######Fish Sizes/ Fish by source/ Figure2####
 if (Fold){
   ##mean sizes of males and females by source
@@ -229,7 +232,7 @@ if(Fold){
   ##This produces Figure 3
   alkPlot(ALK.sm,xlab="Total Length (cm)",pal="gray",type="lines")
   Figure3 <- alkPlot(ALK.sm, xlab="Total Length (cm)", ylab = "Age (years)",type="bubble", main="Black Sea Bass Length at Age", cex.main=2, cex.xlab=3, cex.ylab=3)
-  dev.copy(png,'Figure3.png', width=2000, height=1600, res=200) ; dev.off()
+  dev.copy(png,'figures/Figure3.png', width=2000, height=1600, res=200) ; dev.off()
   
   ### Age-length Key application
   
@@ -278,7 +281,7 @@ if (Fold){
   
   alkPlot(ALK.sm,xlab="Total Length (cm)",pal="gray",type="lines")
   age_plot_nat <- alkPlot(ALK.sm, xlab="Total Length (cm)", ylab = "Age (years)",type="bubble", main="Black Sea Bass Length at Age - Artificial", cex.main=2, cex.xlab=3, cex.ylab=3)
-  dev.copy(png,'AgeArt.png', width=2000, height=1600, res=200) ; dev.off()
+  #dev.copy(png,'AgeArt.png', width=2000, height=1600, res=200) ; dev.off()
   
   ##Natural
   agenat <- agelength[agelength$location_type=="N",]
@@ -308,13 +311,13 @@ if (Fold){
   
   alkPlot(ALK.sm,xlab="Total Length (cm)",pal="gray",type="lines")
   age_plot_nat <- alkPlot(ALK.sm, xlab="Total Length (cm)", ylab = "Age (years)",type="bubble", main="Black Sea Bass Length at Age - Natural", cex.main=2, cex.xlab=3, cex.ylab=3)
-  dev.copy(png,'AgeNat.png', width=2000, height=1600, res=200) ; dev.off()
+  #dev.copy(png,'AgeNat.png', width=2000, height=1600, res=200) ; dev.off()
   
 }##FoldPresentation section for agelength - extra plots if needed to be broken down by site type
 #######Von Bertalanffy with ANOVA####
 if(Fold){
   agelen <- agelength[!is.na(agelength$age),]
-  View(agelen)
+  # View(agelen)
   library(nlstools)          # for nlsBoot()
   library(plotrix)
   
@@ -568,7 +571,7 @@ if (Fold){
   ##The following tables show the intricate details that the plots can't
   table(fish.a$otherpynam)  ### basically just bony fish
   table(fish.n$otherpynam)  ### small bony fish
-} ##end "deep in the weeds" stomach code
+} ##end "deep in the weeds" stomach code - run (always), close figs, and ignore if needed
 if(Fold){
   ####CHI-Squares for diet and location####
   diet_test <- filter(diets.n, source=="ANDRE")
@@ -608,10 +611,10 @@ if(Fold){
   ##For Supplementals
   diet_table<- table(diets.n$pynam,diets.n$source)
   with(diets.n[diets.n$source=="ANDRE",],table(pynam,location_type))
-} ##Fold chi-squares for diet at locatio & size
+} ##Fold chi-squares for diet at location & size
 ##Disclaimer: PSIRI section is painfully long.  Will remain so until I find time to write a function to atutomate the process
 if (Fold){
-  #####PSIRI PLOTS######
+  #####PSIRI PLOTS######  ---If you run the first two, you'll get figure 4
   ######PSIRI Plot --- General Composition for NATURAL Sites- Figure 4 left####### 
   with (diet_test[diet_test$location_type=="N",], table (othergencat))
   ps.gen_nat <- select(diet_test[diet_test$location_type=="N",], othergencat, pyamtw)
@@ -674,7 +677,7 @@ if (Fold){
   #This may get ugly if there are many bars and labels!!!
   text(cumsum(FO) - 0.5*FO,N+5,srt= 90,adj=0,labels)
   
-  #dev.copy(png,'PSIRI_natural.png', width=2000, height=1600, res=200) ; dev.off()
+  dev.copy(png,'figures/Figure4a.png', width=2000, height=1600, res=200) ; dev.off()
   
   
   ######PSIRI Plot --- General Composition for ARTIFICIAL Sites- Figure 4 right########
@@ -738,7 +741,7 @@ if (Fold){
   #This may get ugly if there are many bars and labels!!!
   text(cumsum(FO) - 0.5*FO,N+5,srt= 90,adj=0,labels)
   
-  #dev.copy(png,'PSIRI_Artif.png', width=2000, height=1600, res=200) ; dev.off()
+  dev.copy(png,'figures/Figure4b.png', width=2000, height=1600, res=200) ; dev.off()
   
   
   
@@ -803,7 +806,7 @@ if (Fold){
   temp <- locator(1) # On the chart, click where you would like the text to appear
   text(temp,"General",srt= 90, font=2)
   
-  dev.copy(png,'PSIRI_Natual_2018.png', width=2000, height=1600, res=200) ; dev.off()
+  #dev.copy(png,'PSIRI_Natual_2018.png', width=2000, height=1600, res=200) ; dev.off()
   
   
   
@@ -1105,7 +1108,7 @@ if (Fold){
   library(ggpubr)
   Figure5 <- ggarrange(elipse2, elipse1, elipse3,ncol=1, nrow=3,
                        common.legend = TRUE, legend = "right")
-  dev.copy(png,'Figure5.png', width=2000, height=5000, res=200) ; dev.off()
+  dev.copy(png,'figures/Figure5.png', width=2000, height=5000, res=200) ; dev.off()
 } ## fold stable isotope figures
 if (Fold){
   ##### ANOVAS for Stable Isotopes ###
@@ -1180,7 +1183,7 @@ if (Fold){
   
   Figure6 <- ggarrange(consumer1, consumer2, consumer3,ncol=1, nrow=3,
                        common.legend = TRUE, legend = "right")
-  dev.copy(png,'Consumer Comparison Figure.png', width=2000, height=5000, res=200) ; dev.off()
+  dev.copy(png,'figures/Figure6.png', width=2000, height=5000, res=200) ; dev.off()
 }##Fold Predator vs. Prey isotope signatures/ Figure6
 if (Fold){
   ##Nitrogen in mucus by Consumer Level###
@@ -1270,7 +1273,7 @@ if(Fold){
     geom_point(data= mapsites, size=5, aes(x = Long, y = Lat, color= Site, shape= Year))+
     labs(x="Long", y="Lat", colour="Site Type", shape="Year")+ 
     scale_color_manual(values=c("cyan3", "coral1"), 
-                       labels=c("Nat","Art"))+ 
+                       labels=c("Natural","Artificial"))+ 
     scale_shape_manual(values=c(6,17))+
     coord_sf(xlim = c(-77, -71.5), ylim = c(34.5, 40.1), expand = FALSE)+ 
     annotate(geom = "text", x = -74.5, y = 37.25, label = "Atlantic Ocean", fontface = "italic", color = "grey22", size = 6)+ 
@@ -1281,7 +1284,7 @@ if(Fold){
     geom_rect(aes(xmin = -76, xmax = -72, ymin = 35, ymax = 40),
               fill = "transparent", color = "deeppink4", size = 1.0)+
     annotation_north_arrow(location="bl", which_north="true", style=north_arrow_nautical)
-  dev.copy(png,'Figure1.png', width=2000, height=1600, res=200) ; dev.off()
+  dev.copy(png,'figures/Figure1.png', width=2000, height=1600, res=200) ; dev.off()
 } ##Fold Mapping code
 
 
