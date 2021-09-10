@@ -1079,6 +1079,136 @@ if (Fold){
   bsb$c13s <- as.numeric(bsb$c13s)
   bsb$n15s <-  as.numeric(bsb$n15s)
 } ##Fold stable isotope wrangling
+
+##testing some code for SIBER analysis
+
+temp=isotope[ ,c("c13l", "n15l", "sizecat", "location_type")]; colnames(temp)
+summary(temp)
+temp=(na.omit(temp)); summary(temp)  ##drops things that aren't angled fish
+temp$sizecat=ifelse((temp$sizecat) == "S", "1", "2")  #change size so it can be read by SIBER 
+temp$location_type=ifelse((temp$location_type) == "A", "1", "2")  #change location so it can be read by SIBER
+head(temp)
+
+names(temp)=c("iso1", "iso2", "group", "community"); names(temp)      
+
+set.seed(1)
+library(SIBER)    
+siber.example=(createSiberObject(temp))
+
+# Create lists of plotting arguments to be passed onwards to each 
+# of the three plotting functions.
+community.hulls.args <- list(col = 1, lty = 1, lwd = 1)
+group.ellipses.args  <- list(n = 100, p.interval = 0.95, lty = 1, lwd = 2)
+group.hulls.args     <- list(lty = 2, col = "grey20")
+
+
+
+par(mfrow=c(1,1))
+plotSiberObject(siber.example,
+                ax.pad = 2, 
+                hulls = F, community.hulls.args = community.hulls.args, 
+                ellipses = T, group.ellipses.args = group.ellipses.args,
+                group.hulls = T, group.hulls.args = group.hulls.args,
+                bty = "L",
+                iso.order = c(1,2),
+                xlab = expression({delta}^13*C~'\u2030'),
+                ylab = expression({delta}^15*N~'\u2030')
+)
+
+par(mfrow=c(1,1))
+
+community.hulls.args <- list(col = 1, lty = 1, lwd = 1)
+group.ellipses.args  <- list(n = 100, p.interval = 0.95, lty = 1, lwd = 2)
+group.hull.args      <- list(lty = 2, col = "grey20")
+
+# this time we will make the points a bit smaller by 
+# cex = 0.5
+plotSiberObject(siber.example,
+                ax.pad = 2, 
+                hulls = F, community.hulls.args, 
+                ellipses = F, group.ellipses.args,
+                group.hulls = F, group.hull.args,
+                bty = "L",
+                iso.order = c(1,2),
+                xlab=expression({delta}^13*C~'\u2030'),
+                ylab=expression({delta}^15*N~'\u2030'),
+                cex = 0.5
+)
+
+
+
+# Calculate summary statistics for each group: TA, SEA and SEAc
+group.ML <- groupMetricsML(siber.example)
+print(group.ML)
+# 1.2       1.1       2.2       2.1
+# TA   8.389450 19.860700 11.443450 17.215650
+# SEA  1.630509  2.613049  2.039266  2.745728
+# SEAc 1.651413  2.636804  2.055982  2.778415
+
+
+# You can add more ellipses by directly calling plot.group.ellipses()
+# Add an additional p.interval % prediction ellilpse
+plotGroupEllipses(siber.example, n = 100, p.interval = 0.95,
+                  lty = 1, lwd = 2)
+
+# or you can add the XX% confidence interval around the bivariate means
+# by specifying ci.mean = T along with whatever p.interval you want.
+plotGroupEllipses(siber.example, n = 100, p.interval = 0.95, ci.mean = T,
+                  lty = 1, lwd = 2)
+
+# A second plot provides information more suitable to comparing
+# the two communities based on the community-level Layman metrics
+
+# this time we will make the points a bit smaller by 
+# cex = 0.5
+plotSiberObject(siber.example,
+                ax.pad = 2, 
+                hulls = T, community.hulls.args, 
+                ellipses = F, group.ellipses.args,
+                group.hulls = F, group.hull.args,
+                bty = "L",
+                iso.order = c(1,2),
+                xlab=expression({delta}^13*C~'\u2030'),
+                ylab=expression({delta}^15*N~'\u2030'),
+                cex = 0.5
+)
+
+# or you can add the XX% confidence interval around the bivariate means
+# by specifying ci.mean = T along with whatever p.interval you want.
+plotGroupEllipses(siber.example, n = 100, p.interval = 0.95,
+                  ci.mean = T, lty = 1, lwd = 2) 
+
+# Calculate the various Layman metrics on each of the communities.
+community.ML <- communityMetricsML(siber.example) 
+print(community.ML)
+
+# 1          2
+# dY_range 0.20630357 0.23129407
+# dX_range 0.04460714 0.02421605
+# TA       0.00000000 0.00000000
+# CD       0.10553549 0.11627915
+# MNND     0.21107099 0.23255831
+# SDNND    0.00000000 0.00000000
+
+# options for running jags
+parms <- list()
+parms$n.iter <- 2 * 10^4   # number of iterations to run the model for
+parms$n.burnin <- 1 * 10^3 # discard the first set of values
+parms$n.thin <- 10     # thin the posterior by this many
+parms$n.chains <- 2        # run this many chains
+
+# define the priors
+priors <- list()
+priors$R <- 1 * diag(2)
+priors$k <- 2
+priors$tau.mu <- 1.0E-3
+
+# fit the ellipses which uses an Inverse Wishart prior
+# on the covariance matrix Sigma, and a vague normal prior on the 
+# means. Fitting is via the JAGS method.
+ellipses.posterior <- siberMVN(siber.example, parms, priors)
+
+
 if (Fold){
   ###### Q1:Are SI values different at Location? or size### 
   elipse1 <- ggplot(bsb, aes(c13l, n15l, color=losiz))+labs(color="Location | Size")+
