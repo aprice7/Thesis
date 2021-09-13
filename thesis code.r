@@ -1208,6 +1208,87 @@ priors$tau.mu <- 1.0E-3
 # means. Fitting is via the JAGS method.
 ellipses.posterior <- siberMVN(siber.example, parms, priors)
 
+# The posterior estimates of the ellipses for each group can be used to
+# calculate the SEA.B for each group.
+SEA.B <- siberEllipses(ellipses.posterior)
+
+siberDensityPlot(SEA.B, xticklabels = colnames(group.ML), 
+                 xlab = c("Community (site type)| Group (size)"),
+                 ylab = expression("Standard Ellipse Area " ('\u2030' ^2) ),
+                 bty = "L",
+                 las = 1,
+                 main = "SIBER ellipses on each group"
+)
+
+# Add red x's for the ML estimated SEA-c
+points(1:ncol(SEA.B), group.ML[3,], col="red", pch = "x", lwd = 2)
+
+# Calculate some credible intervals 
+cr.p <- c(0.95, 0.99) # vector of quantiles
+
+# call to hdrcde:hdr using lapply()
+SEA.B.credibles <- lapply(
+  as.data.frame(SEA.B), 
+  function(x,...){tmp<-hdrcde::hdr(x)$hdr},
+  prob = cr.p)
+
+# do similar to get the modes, taking care to pick up multimodal posterior
+# distributions if present
+SEA.B.modes <- lapply(
+  as.data.frame(SEA.B), 
+  function(x,...){tmp<-hdrcde::hdr(x)$mode},
+  prob = cr.p, all.modes=T)
+
+# extract the posterior means
+mu.post <- extractPosteriorMeans(siber.example, ellipses.posterior)
+
+# calculate the corresponding distribution of layman metrics
+layman.B <- bayesianLayman(mu.post)
+
+
+
+# --------------------------------------
+# Visualise the first community
+# --------------------------------------
+siberDensityPlot(layman.B[[1]], xticklabels = colnames(layman.B[[1]]), 
+                 bty="L", ylim = c(0,20))
+
+# add the ML estimates (if you want). Extract the correct means 
+# from the appropriate array held within the overall array of means.
+comm1.layman.ml <- laymanMetrics(siber.example$ML.mu[[1]][1,1,],
+                                 siber.example$ML.mu[[1]][1,2,]
+)
+points(1:6, comm1.layman.ml$metrics, col = "red", pch = "x", lwd = 2)
+
+# --------------------------------------
+# Visualise the second community
+# --------------------------------------
+siberDensityPlot(layman.B[[2]], xticklabels = colnames(layman.B[[2]]), 
+                 bty="L", ylim = c(0,20))
+
+# add the ML estimates. (if you want) Extract the correct means 
+# from the appropriate array held within the overall array of means.
+comm2.layman.ml <- laymanMetrics(siber.example$ML.mu[[2]][1,1,],
+                                 siber.example$ML.mu[[2]][1,2,]
+)
+points(1:6, comm2.layman.ml$metrics, col = "red", pch = "x", lwd = 2)
+
+
+# --------------------------------------
+# Alternatively, pull out TA from both and aggregate them into a 
+# single matrix using cbind() and plot them together on one graph.
+# --------------------------------------
+
+# go back to a 1x1 panel plot
+par(mfrow=c(1,1))
+
+siberDensityPlot(cbind(layman.B[[1]][,"TA"], layman.B[[2]][,"TA"]),
+                 xticklabels = c("Community 1", "Community 2"), 
+                 bty="L", ylim = c(0,20),
+                 las = 1,
+                 ylab = "TA - Convex Hull Area",
+                 xlab = "")
+
 
 if (Fold){
   ###### Q1:Are SI values different at Location? or size### 
