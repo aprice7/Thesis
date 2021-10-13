@@ -1085,11 +1085,12 @@ if (Fold){
 temp=isotope[ ,c("c13l", "n15l", "sizecat", "location_type")]; colnames(temp)
 summary(temp)
 temp=(na.omit(temp)); summary(temp)  ##drops things that aren't angled fish
-temp$sizecat=ifelse((temp$sizecat) == "S", "1", "2")  #change size so it can be read by SIBER 
-temp$location_type=ifelse((temp$location_type) == "A", "1", "2")  #change location so it can be read by SIBER
+temp$sizecat=ifelse((temp$sizecat) == "S", "1", "2")  #change size so it can be read by SIBER  - 1 & 2 = small and med, respectively
+temp$location_type=ifelse((temp$location_type) == "A", "1", "2")  #change location so it can be read by SIBER - 1 and 2 = art and nat, respectively 
 head(temp)
 
-names(temp)=c("iso1", "iso2", "group", "community"); names(temp)      
+names(temp)=c("iso1", "iso2", "group", "community"); names(temp) 
+
 
 set.seed(1)
 library(SIBER)    
@@ -1288,6 +1289,64 @@ siberDensityPlot(cbind(layman.B[[1]][,"TA"], layman.B[[2]][,"TA"]),
                  las = 1,
                  ylab = "TA - Convex Hull Area",
                  xlab = "")
+
+if (Fold){
+
+##########___ testing for second setup - using location as the community and tissue as group
+temp_l= isotope[ ,c("c13l", "n15l", "sizecat", "location_type")]; colnames(temp_l); dim(temp_l)
+temp_l=temp_l[!is.na(temp_l$sizecat), ]; dim(temp_l)  ##this takes out the prey items that were tested
+temp_l$group=1 ##Group 1 is liver
+temp_l$location_type=ifelse((temp_l$location_type) == "A", "1", "2") ##turning location into a numeric value artificial = 1, nat=2
+names(temp_l)=c("iso1", "iso2", "sizecat", "community","group")  ##location_type renamed to community
+temp_l= temp_l[ ,c("iso1", "iso2", "group", "community")]; summary(temp_l) ##size dropped for now
+temp_l$community=as.numeric(temp_l$community)
+temp_l=na.omit(temp_l); summary(temp_l); dim(temp_l)
+
+
+temp_m= isotope[ ,c("c13m", "n15m", "sizecat", "location_type")]; colnames(temp_m); dim(temp_l)
+temp_m=temp_m[!is.na(temp_m$sizecat), ]; dim(temp_m)##this takes out the prey items that were tested
+temp_m$group=2 ##becasue this will denote muscle
+temp_m$location_type=ifelse((temp_m$location_type) == "A", "1", "2") ##turning location into a numeric value artificial = 1, nat=2
+names(temp_m)=c("iso1", "iso2", "sizecat", "community","group")  ##location_type renamed to community
+temp_m= temp_m[ ,c("iso1", "iso2", "group", "community")]; summary(temp_m) ##size dropped for now
+temp_m$community=as.numeric(temp_m$community)
+temp_m=na.omit(temp_m); summary(temp_m); dim(temp_m)
+
+temp_s= isotope[ ,c("c13s", "n15s", "sizecat", "location_type")]; colnames(temp_s)
+temp_s=temp_s[!is.na(temp_s$sizecat), ]; dim(temp_s)##this takes out the prey items that were tested
+temp_s$group=3 ##becasue this will denote ,mucus
+temp_s$location_type=ifelse((temp_s$location_type) == "A", "1", "2") ##turning location into a numeric value artificial = 1, nat=2
+names(temp_s)=c("iso1", "iso2", "sizecat", "community","group")  ##location_type renamed to community
+temp_s= temp_s[ ,c("iso1", "iso2", "group", "community")]; summary(temp_s) ##size dropped for now
+temp_s$community=as.numeric(temp_s$community)
+temp_s=na.omit(temp_s); summary(temp_s); dim(temp_s)
+
+alldata= merge(temp_l, temp_m, all=TRUE)
+
+alldata= merge(alldata, temp_s, all=TRUE); summary(alldata); dim(alldata)
+
+# Create lists of plotting arguments to be passed onwards to each 
+# of the three plotting functions.
+community.hulls.args <- list(col = 1, lty = 1, lwd = 1)
+group.ellipses.args  <- list(n = 100, p.interval = 0.95, lty = 1, lwd = 2)
+group.hulls.args     <- list(lty = 2, col = "grey20")
+
+
+siber.example <- createSiberObject(alldata)
+
+par(mfrow=c(1,1))
+plotSiberObject(siber.example,
+                ax.pad = 2, 
+                hulls = F, community.hulls.args = community.hulls.args, 
+                ellipses = T, group.ellipses.args = group.ellipses.args,
+                group.hulls = T, group.hulls.args = group.hulls.args,
+                bty = "L",
+                iso.order = c(1,2),
+                xlab = expression({delta}^13*C~'\u2030'),
+                ylab = expression({delta}^15*N~'\u2030')
+)
+
+}  ## end testing secondary setup for siber
 
 
 if (Fold){
