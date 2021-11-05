@@ -1323,7 +1323,10 @@ temp_s=na.omit(temp_s); summary(temp_s); dim(temp_s)
 
 alldata= merge(temp_l, temp_m, all=TRUE)
 
-alldata= merge(alldata, temp_s, all=TRUE); summary(alldata); dim(alldata)
+alldata= merge(alldata, temp_s, all=TRUE)
+
+##review the dataset
+summary(alldata); dim(alldata); head(alldata)
 
 # Create lists of plotting arguments to be passed onwards to each 
 # of the three plotting functions.
