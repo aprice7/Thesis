@@ -1,6 +1,7 @@
 Fold=TRUE  ##run this line for easier navigation
 
 library(SIBER)
+library(rjags)
 
 ##Use the next line to load the needed files
 #load(file = "data/wrangeld_for_isotopes")
@@ -12,7 +13,7 @@ If (fold){
   ## I interpret the following analysis as showing that there are no significant differences amongst the two communities.
   ## Based stronly on the graphical representations shown in the density plots
   
-If(fold){
+If (fold){
 ##Compile and review the data setup - this should compare all three isotopes by group (Liv, Mus, or mucuS ) and community (artificial or natural)
 temp_l= isotope[ ,c("c13l", "n15l", "sizecat", "location_type")]; colnames(temp_l); dim(temp_l)
 temp_l=temp_l[!is.na(temp_l$sizecat), ]; dim(temp_l)  ##this takes out the prey items that were tested
@@ -78,23 +79,23 @@ plotSiberObject(siber.example,
 )
 
 
-community.hulls.args <- list(col = 1, lty = 1, lwd = 1)
-group.ellipses.args  <- list(n = 100, p.interval = 0.95, lty = 1, lwd = 2)
-group.hull.args      <- list(lty = 2, col = "grey20")
-
-# this time we will make the points a bit smaller by 
-# cex = 0.5
-plotSiberObject(siber.example,
-                ax.pad = 2, 
-                hulls = F, community.hulls.args, 
-                ellipses = F, group.ellipses.args,
-                group.hulls = F, group.hull.args,
-                bty = "L",
-                iso.order = c(1,2),
-                xlab=expression({delta}^13*C~'\u2030'),
-                ylab=expression({delta}^15*N~'\u2030'),
-                cex = 0.5
-)
+# community.hulls.args <- list(col = 1, lty = 1, lwd = 1)
+# group.ellipses.args  <- list(n = 100, p.interval = 0.95, lty = 1, lwd = 2)
+# group.hull.args      <- list(lty = 2, col = "grey20")
+# 
+# # this time we will make the points a bit smaller by 
+# # cex = 0.5
+# plotSiberObject(siber.example,
+#                 ax.pad = 2, 
+#                 hulls = F, community.hulls.args, 
+#                 ellipses = F, group.ellipses.args,
+#                 group.hulls = F, group.hull.args,
+#                 bty = "L",
+#                 iso.order = c(1,2),
+#                 xlab=expression({delta}^13*C~'\u2030'),
+#                 ylab=expression({delta}^15*N~'\u2030'),
+#                 cex = 0.5
+# )
 
 
 
@@ -245,10 +246,31 @@ par(mfrow=c(1,1))
 
 siberDensityPlot(cbind(layman.B[[1]][,"TA"], layman.B[[2]][,"TA"]),
                  xticklabels = c("Community 1", "Community 2"), 
-                 bty="L", ylim = c(0,20),
+                 bty="L", ylim = c(0,10),
                  las = 1,
                  ylab = "TA - Convex Hull Area",
                  xlab = "")
+
+##these two communities dont differ in standard area
+
+
+##Do they overlap?
+ellipse1 <- "1.1"
+ellipse2 <- "1.2"
+ellipse3 <- "1.3"
+ellipse4 <- "2.1"
+ellipse5 <- "2.2"
+ellipse6 <- "2.3"
+
+sea.overlap <- maxLikOverlap(ellipse1, ellipse2, siber.example, p.interval = 0.95, n=100)
+ellipse95.overlap<- maxLikOverlap(ellipse1, ellipse2, siber.example, p.interval = 0.95, n=100)
+ellipse.posterior <- siberMVN(siber.example, parms, priors)
+bayes95.overlap <-bayesianOverlap(ellipse1, ellipse2, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+hist(bayes95.overlap[ ,3] ,10)
+
+bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+hist(bayes.prop.95.over ,10)
+
 
 } ## fold isotope at location type  SIBER analysis
 
