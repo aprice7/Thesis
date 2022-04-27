@@ -174,14 +174,24 @@ ellipses.posterior <- siberMVN(siber.example, parms, priors)
 # calculate the SEA.B for each group.
 SEA.B <- siberEllipses(ellipses.posterior)
 
+my_clrs <- matrix(c("cyan1", "cyan1", "cyan1",
+                    "cyan1", "cyan1", "cyan1",
+                    "cyan1", "cyan1", "cyan1",
+                    "coral1", "coral1", "coral1",
+                    "coral1", "coral1", "coral1",
+                    "coral1", "coral1", "coral1"), nrow = 3, ncol = 6)
+
 siberDensityPlot(SEA.B, xticklabels = colnames(group.ML), 
-                 xlab = c("Community (site type)| Group (size)"),
+                 xlab = c("Community (Site Type)| Group (Tissue Type)"),
                  ylab = expression("Standard Ellipse Area " ('\u2030' ^2) ),
                  bty = "L",
                  las = 1,
-                 main = "SIBER ellipses on each group"
+                 main = "SIBER SEA.B for Each Group",
+                 clr=my_clrs
 )
-
+legend("topright", legend = c("Artificial", "Natural"),fill=
+       c("cyan1", "coral1"))
+dev.copy(png,'figures/SiteVTissue_SEAB.png', width=2000, height=1600, res=200) ; dev.off()
 # Add red x's for the ML estimated SEA-c
 points(1:ncol(SEA.B), group.ML[3,], col="red", pch = "x", lwd = 2)
 
@@ -244,12 +254,19 @@ points(1:6, comm2.layman.ml$metrics, col = "red", pch = "x", lwd = 2)
 # go back to a 1x1 panel plot
 par(mfrow=c(1,1))
 
+my_clrs <- matrix(c("cyan1", "cyan1", "cyan1",
+                    "coral1", "coral1", "coral1"), nrow = 3, ncol = 2)
+
 siberDensityPlot(cbind(layman.B[[1]][,"TA"], layman.B[[2]][,"TA"]),
                  xticklabels = c("Community 1", "Community 2"), 
                  bty="L", ylim = c(0,10),
                  las = 1,
                  ylab = "TA - Convex Hull Area",
-                 xlab = "")
+                 xlab = "",
+                 clr=my_clrs
+                 )
+legend("topright", legend = c("Artificial", "Natural"),fill=
+         c("cyan1", "coral1"))
 
 ##these two communities dont differ in standard area
 
@@ -262,6 +279,7 @@ ellipse4 <- "2.1"
 ellipse5 <- "2.2"
 ellipse6 <- "2.3"
 
+##Artificial - liver to Muscle
 sea.overlap <- maxLikOverlap(ellipse1, ellipse2, siber.example, p.interval = 0.95, n=100)
 ellipse95.overlap<- maxLikOverlap(ellipse1, ellipse2, siber.example, p.interval = 0.95, n=100)
 ellipse.posterior <- siberMVN(siber.example, parms, priors)
@@ -269,7 +287,99 @@ bayes95.overlap <-bayesianOverlap(ellipse1, ellipse2, ellipses.posterior, draws 
 hist(bayes95.overlap[ ,3] ,10)
 
 bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
-hist(bayes.prop.95.over ,10)
+hist(bayes.prop.95.over ,10)  ##about half of muscle and liver in artifical sites overlap.
+
+#dev.copy(png,'figures/BayseanOverlapLiverMuscleArtificial.png', width=2000, height=1600, res=200) ; dev.off()
+
+##Artificial - muscle to mucus
+sea.overlap <- maxLikOverlap(ellipse2, ellipse3, siber.example, p.interval = 0.95, n=100)
+ellipse95.overlap<- maxLikOverlap(ellipse2, ellipse3, siber.example, p.interval = 0.95, n=100)
+ellipse.posterior <- siberMVN(siber.example, parms, priors)
+bayes95.overlap <-bayesianOverlap(ellipse2, ellipse3, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+hist(bayes95.overlap[ ,3] ,10)
+
+bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+hist(bayes.prop.95.over ,10)  ##about 43% of liver and mucus samples overlap at artifical sites
+
+##Artifical - liver to mucus
+sea.overlap <- maxLikOverlap(ellipse1, ellipse3, siber.example, p.interval = 0.95, n=100)
+ellipse95.overlap<- maxLikOverlap(ellipse1, ellipse3, siber.example, p.interval = 0.95, n=100)
+ellipse.posterior <- siberMVN(siber.example, parms, priors)
+bayes95.overlap <-bayesianOverlap(ellipse1, ellipse3, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+hist(bayes95.overlap[ ,3] ,10)
+
+bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+hist(bayes.prop.95.over ,10)  ##about 30% of muscle and mucus samples overlap at artifical sites.
+
+
+##natural - liver to Muscle
+sea.overlap <- maxLikOverlap(ellipse4, ellipse5, siber.example, p.interval = 0.95, n=100)
+ellipse95.overlap<- maxLikOverlap(ellipse4, ellipse5, siber.example, p.interval = 0.95, n=100)
+ellipse.posterior <- siberMVN(siber.example, parms, priors)
+bayes95.overlap <-bayesianOverlap(ellipse4, ellipse5, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+hist(bayes95.overlap[ ,3] ,10)
+
+bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+hist(bayes.prop.95.over ,10)  ##about .33-.35 of muscle and liver in artifical sites overlap.
+
+#dev.copy(png,'figures/BayseanOverlapLiverMusclenatural.png', width=2000, height=1600, res=200) ; dev.off()
+
+##natural - muscle to mucus
+sea.overlap <- maxLikOverlap(ellipse5, ellipse6, siber.example, p.interval = 0.95, n=100)
+ellipse95.overlap<- maxLikOverlap(ellipse5, ellipse6, siber.example, p.interval = 0.95, n=100)
+ellipse.posterior <- siberMVN(siber.example, parms, priors)
+bayes95.overlap <-bayesianOverlap(ellipse5, ellipse6, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+hist(bayes95.overlap[ ,3] ,10)
+
+bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+hist(bayes.prop.95.over ,10)  ##about 33% of liver and mucus samples overlap at artifical sites
+
+##Natural - liver to mucus
+sea.overlap <- maxLikOverlap(ellipse4, ellipse6, siber.example, p.interval = 0.95, n=100)
+ellipse95.overlap<- maxLikOverlap(ellipse4, ellipse6, siber.example, p.interval = 0.95, n=100)
+ellipse.posterior <- siberMVN(siber.example, parms, priors)
+bayes95.overlap <-bayesianOverlap(ellipse4, ellipse6, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+hist(bayes95.overlap[ ,3] ,10)
+
+bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+hist(bayes.prop.95.over ,10)  ##about 09% of muscle and mucus samples overlap at artifical sites.
+
+
+##Between sites
+
+##liver art v liver nat
+sea.overlap <- maxLikOverlap(ellipse1, ellipse4, siber.example, p.interval = 0.95, n=100)
+ellipse95.overlap<- maxLikOverlap(ellipse1, ellipse4, siber.example, p.interval = 0.95, n=100)
+ellipse.posterior <- siberMVN(siber.example, parms, priors)
+bayes95.overlap <-bayesianOverlap(ellipse1, ellipse4, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+hist(bayes95.overlap[ ,3] ,10)
+
+bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+hist(bayes.prop.95.over ,10) ##about 30% overlap beteen liver in art v nat
+
+##Muscle art v muscle nat
+sea.overlap <- maxLikOverlap(ellipse2, ellipse5, siber.example, p.interval = 0.95, n=100)
+ellipse95.overlap<- maxLikOverlap(ellipse2, ellipse5, siber.example, p.interval = 0.95, n=100)
+ellipse.posterior <- siberMVN(siber.example, parms, priors)
+bayes95.overlap <-bayesianOverlap(ellipse2, ellipse5, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+hist(bayes95.overlap[ ,3] ,10)
+
+bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+hist(bayes.prop.95.over ,10) ##about 40% overlap beteen liver in art v nat
+
+##mucus art v mucus nat
+
+sea.overlap <- maxLikOverlap(ellipse3, ellipse6, siber.example, p.interval = 0.95, n=100)
+ellipse95.overlap<- maxLikOverlap(ellipse3, ellipse6, siber.example, p.interval = 0.95, n=100)
+ellipse.posterior <- siberMVN(siber.example, parms, priors)
+bayes95.overlap <-bayesianOverlap(ellipse3, ellipse6, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+hist(bayes95.overlap[ ,3] ,10)
+
+bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+hist(bayes.prop.95.over ,10) ##about 25% overlap beteen mucus in art v nat
+
+
+
 
 
 } ## fold isotope at location type  SIBER analysis
