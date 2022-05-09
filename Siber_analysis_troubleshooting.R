@@ -392,46 +392,46 @@ If (fold) {
 ##Also no difference in liver or mucus in med fish, only difference in muscle - again, based on density plots.
 ##Not sure how to interpret the last graph displaying TA of Convex hull Area.  It makes the two communities look the same.
   
-If (fold) {  
-##Compile and review the data setup - this should compare all three isotopes by group (Liv, Mus, or mucuS ) and community (size - small or med)
-temp_l= isotope[ ,c("c13l", "n15l", "sizecat", "location_type")]; colnames(temp_l); dim(temp_l)
-temp_l=temp_l[!is.na(temp_l$sizecat), ]; dim(temp_l)  ##this takes out the prey items that were tested
-temp_l$group=1 ##Group 1 is liver
-temp_l$sizecat=ifelse((temp_l$sizecat) == "S", "1", "2") ##turning size into a numeric value small = 1, med=2
-names(temp_l)=c("iso1", "iso2", "community", "location_type","group")  ##size renamed to community
-temp_l= temp_l[ ,c("iso1", "iso2", "group", "community")]; summary(temp_l) ##locaiton dropped 
-temp_l$community=as.numeric(temp_l$community)
-temp_l=na.omit(temp_l); summary(temp_l); dim(temp_l)
-
-
-temp_m= isotope[ ,c("c13m", "n15m", "sizecat", "location_type")]; colnames(temp_m); dim(temp_l)
-temp_m=temp_m[!is.na(temp_m$sizecat), ]; dim(temp_m)##this takes out the prey items that were tested
-temp_m=temp_m[!is.na(temp_m$c13m), ]; dim(temp_m)##this takes out the na items that were tested
-temp_m$group=2 ##becasue this will denote muscle
-temp_m$sizecat=ifelse((temp_m$sizecat) == "S", "1", "2") ##turning size into a numeric value small = 1, med=2names(temp_m)=c("iso1", "iso2", "sizecat", "community","group")  ##location_type renamed to community
-names(temp_m)=c("iso1", "iso2", "community", "location_type","group")  ##location_type renamed to community
-temp_m= temp_m[ ,c("iso1", "iso2", "group", "community")]; summary(temp_m) ##locaiton dropped
-temp_m$community=as.numeric(temp_m$community)
-temp_m=na.omit(temp_m); summary(temp_m); dim(temp_m)
-
-temp_s= isotope[ ,c("c13s", "n15s", "sizecat", "location_type")]; colnames(temp_s)
-temp_s=temp_s[!is.na(temp_s$sizecat), ]; dim(temp_s)##this takes out the prey items that were tested
-temp_s$group=3 ##becasue this will denote ,mucus
-temp_s$sizecat=ifelse((temp_s$sizecat) == "S", "1", "2") ##turning size into a numeric value small = 1, med=2names(temp_m)=c("iso1", "iso2", "sizecat", "community","group")  ##location_type renamed to community
-names(temp_s)=c("iso1", "iso2", "community", "location_type","group")  ##location_type renamed to community
-temp_s= temp_s[ ,c("iso1", "iso2", "group", "community")]; summary(temp_s) ##locaiton dropped
-temp_s$community=as.numeric(temp_s$community)
-temp_s=na.omit(temp_s); summary(temp_s); dim(temp_s)
-
-alldata= merge(temp_l, temp_m, all=TRUE)
-
-alldata= merge(alldata, temp_s, all=TRUE)
-
-##review the dataset- made 3 groups (where 1=Liv, 2=Mus, & 3=mucuS)  and 2 communities (where 1 = small & 2 = medium sized fish).
-summary(alldata); dim(alldata)
-#View(alldata)
-
-} ##fold wrangling for isotope by size SIBER comparison
+  If (fold) {  
+    ##Compile and review the data setup - this should compare all three isotopes by group (Liv, Mus, or mucuS ) and community (size - small or med)
+    temp_l= isotope[ ,c("c13l", "n15l", "sizecat", "location_type")]; colnames(temp_l); dim(temp_l)
+    temp_l=temp_l[!is.na(temp_l$sizecat), ]; dim(temp_l)  ##this takes out the prey items that were tested
+    temp_l$group=1 ##Group 1 is liver
+    temp_l$sizecat=ifelse((temp_l$sizecat) == "S", "1", "2") ##turning size into a numeric value small = 1, med=2
+    names(temp_l)=c("iso1", "iso2", "community", "location_type","group")  ##size renamed to community
+    temp_l= temp_l[ ,c("iso1", "iso2", "group", "community")]; summary(temp_l) ##locaiton dropped 
+    temp_l$community=as.numeric(temp_l$community)
+    temp_l=na.omit(temp_l); summary(temp_l); dim(temp_l)
+    
+    
+    temp_m= isotope[ ,c("c13m", "n15m", "sizecat", "location_type")]; colnames(temp_m); dim(temp_l)
+    temp_m=temp_m[!is.na(temp_m$sizecat), ]; dim(temp_m)##this takes out the prey items that were tested
+    temp_m=temp_m[!is.na(temp_m$c13m), ]; dim(temp_m)##this takes out the na items that were tested
+    temp_m$group=2 ##becasue this will denote muscle
+    temp_m$sizecat=ifelse((temp_m$sizecat) == "S", "1", "2") ##turning size into a numeric value small = 1, med=2names(temp_m)=c("iso1", "iso2", "sizecat", "community","group")  ##location_type renamed to community
+    names(temp_m)=c("iso1", "iso2", "community", "location_type","group")  ##location_type renamed to community
+    temp_m= temp_m[ ,c("iso1", "iso2", "group", "community")]; summary(temp_m) ##locaiton dropped
+    temp_m$community=as.numeric(temp_m$community)
+    temp_m=na.omit(temp_m); summary(temp_m); dim(temp_m)
+    
+    temp_s= isotope[ ,c("c13s", "n15s", "sizecat", "location_type")]; colnames(temp_s)
+    temp_s=temp_s[!is.na(temp_s$sizecat), ]; dim(temp_s)##this takes out the prey items that were tested
+    temp_s$group=3 ##becasue this will denote ,mucus
+    temp_s$sizecat=ifelse((temp_s$sizecat) == "S", "1", "2") ##turning size into a numeric value small = 1, med=2names(temp_m)=c("iso1", "iso2", "sizecat", "community","group")  ##location_type renamed to community
+    names(temp_s)=c("iso1", "iso2", "community", "location_type","group")  ##location_type renamed to community
+    temp_s= temp_s[ ,c("iso1", "iso2", "group", "community")]; summary(temp_s) ##locaiton dropped
+    temp_s$community=as.numeric(temp_s$community)
+    temp_s=na.omit(temp_s); summary(temp_s); dim(temp_s)
+    
+    alldata_size= merge(temp_l, temp_m, all=TRUE)
+    
+    alldata_size= merge(alldata_size, temp_s, all=TRUE)
+    
+    ##review the dataset- made 3 groups (where 1=Liv, 2=Mus, & 3=mucuS)  and 2 communities (where 1 = small & 2 = medium sized fish).
+    summary(alldata_size); dim(alldata_size)
+    #View(alldata_size)
+    
+  } ##fold wrangling for isotope by size SIBER comparison
   
   If (fold){
     
@@ -442,14 +442,14 @@ summary(alldata); dim(alldata)
     group.hulls.args     <- list(lty = 2, col = "grey20")
     
     
-    siber.example <- createSiberObject(alldata)
+    siber.example <- createSiberObject(alldata_size)
     
     par(mfrow=c(1,1))
     plotSiberObject(siber.example,
                     ax.pad = 2, 
                     hulls = F, community.hulls.args = community.hulls.args, 
                     ellipses = T, group.ellipses.args = group.ellipses.args,
-                    group.hulls = T, group.hulls.args = group.hulls.args,
+                    group.hulls = F, group.hulls.args = group.hulls.args,
                     bty = "L",
                     iso.order = c(1,2),
                     xlab = expression({delta}^13*C~'\u2030'),
@@ -555,13 +555,43 @@ summary(alldata); dim(alldata)
     # calculate the SEA.B for each group.
     SEA.B <- siberEllipses(ellipses.posterior)
     
-    siberDensityPlot(SEA.B, xticklabels = colnames(group.ML), 
-                     xlab = c("Community (site type)| Group (size)"),
+    my_clrs <- matrix(c("blue", "blue", "blue",
+                        "blue", "blue", "blue",
+                        "blue", "blue", "blue",
+                        "red", "red", "red",
+                        "red", "red", "red",
+                        "red", "red", "red"), nrow = 3, ncol = 6)
+    
+    # siberDensityPlot(SEA.B, xticklabels = colnames(group.ML), 
+    #                  xlab = c("Community (Size)| Group (Isotope)"),
+    #                  ylab = expression("Standard Ellipse Area " ('\u2030' ^2) ),
+    #                  bty = "L",
+    #                  las = 1,
+    #                  main = "SIBER ellipses on each group",
+    #                  clr = my_clrs,
+    #                  pch= 2
+    # )
+    # legend("topright", legend = c("Small", "Medium"),fill=
+    #          c("blue", "red"))
+    
+    
+    ticknames=c("liver", "muscle", "mucus", "liver", "muscle", "mucus")
+    
+    siberDensityPlot(SEA.B, xticklabels = ticknames, 
+                     xlab = c("Community (Size)| Group (Isotope)"),
                      ylab = expression("Standard Ellipse Area " ('\u2030' ^2) ),
                      bty = "L",
                      las = 1,
-                     main = "SIBER ellipses on each group"
+                     main = "SIBER ellipses on each group",
+                     clr = my_clrs,
+                     pch= 2
     )
+    legend("topright", legend = c("Small", "Medium"),fill=
+             c("blue", "red"))
+    
+    
+    #dev.copy(png,'figures/SIBER_SEA_Size.png', width=2000, height=1600, res=200) ; dev.off()
+    
     
     # Add red x's for the ML estimated SEA-c
     points(1:ncol(SEA.B), group.ML[3,], col="red", pch = "x", lwd = 2)
@@ -622,15 +652,131 @@ summary(alldata); dim(alldata)
     # single matrix using cbind() and plot them together on one graph.
     # --------------------------------------
     
+    my_clrs <- matrix(c("blue", "blue", "blue",
+                        "blue","red", "red", "red",
+                        "red"), nrow = 4, ncol = 4)
+    
     # go back to a 1x1 panel plot
-    par(mfrow=c(1,1))
+    #par(mfrow=c(2,1))
     
     siberDensityPlot(cbind(layman.B[[1]][,"TA"], layman.B[[2]][,"TA"]),
-                     xticklabels = c("Community 1", "Community 2"), 
+                     xticklabels = c("Small Fish", "Medium Fish"), 
                      bty="L", ylim = c(0,20),
                      las = 1,
                      ylab = "TA - Convex Hull Area",
-                     xlab = "")
+                     xlab = "",
+                     clr=my_clrs)
+    
+    ##Do they overlap?
+    ellipse1 <- "1.1"
+    ellipse2 <- "1.2"
+    ellipse3 <- "1.3"
+    ellipse4 <- "2.1"
+    ellipse5 <- "2.2"
+    ellipse6 <- "2.3"
+    
+    ##Between sites
+    
+    ##liver small v liver med
+    sea.overlap <- maxLikOverlap(ellipse1, ellipse4, siber.example, p.interval = 0.95, n=100)
+    ellipse95.overlap<- maxLikOverlap(ellipse1, ellipse4, siber.example, p.interval = 0.95, n=100)
+    ellipse.posterior <- siberMVN(siber.example, parms, priors)
+    bayes95.overlap <-bayesianOverlap(ellipse1, ellipse4, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+    hist(bayes95.overlap[ ,3] ,10)
+    
+    bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+    hist(bayes.prop.95.over ,10) ##about 38% modal overlap beteen liver in art v nat. 34-42 total
+    
+    ##Muscle small v muscle med
+    sea.overlap <- maxLikOverlap(ellipse2, ellipse5, siber.example, p.interval = 0.95, n=100)
+    ellipse95.overlap<- maxLikOverlap(ellipse2, ellipse5, siber.example, p.interval = 0.95, n=100)
+    ellipse.posterior <- siberMVN(siber.example, parms, priors)
+    bayes95.overlap <-bayesianOverlap(ellipse2, ellipse5, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+    hist(bayes95.overlap[ ,3] ,10)
+    
+    bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+    hist(bayes.prop.95.over ,10) ##about 33% overlap beteen liver in art v nat
+    
+    ##mucus small v mucus med
+    
+    sea.overlap <- maxLikOverlap(ellipse3, ellipse6, siber.example, p.interval = 0.95, n=100)
+    ellipse95.overlap<- maxLikOverlap(ellipse3, ellipse6, siber.example, p.interval = 0.95, n=100)
+    ellipse.posterior <- siberMVN(siber.example, parms, priors)
+    bayes95.overlap <-bayesianOverlap(ellipse3, ellipse6, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+    hist(bayes95.overlap[ ,3] ,10)
+    
+    bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+    hist(bayes.prop.95.over ,10) ##about 25% overlap beteen mucus in art v nat
+    
+    
+    ##Within sizes -small
+    
+    ##liver small v muscle small
+    sea.overlap <- maxLikOverlap(ellipse1, ellipse2, siber.example, p.interval = 0.95, n=100)
+    ellipse95.overlap<- maxLikOverlap(ellipse1, ellipse2, siber.example, p.interval = 0.95, n=100)
+    ellipse.posterior <- siberMVN(siber.example, parms, priors)
+    bayes95.overlap <-bayesianOverlap(ellipse1, ellipse2, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+    hist(bayes95.overlap[ ,3] ,10)
+    
+    bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+    hist(bayes.prop.95.over ,10) ##about 24%
+    
+    ##Muscle v mucus small
+    sea.overlap <- maxLikOverlap(ellipse2, ellipse3, siber.example, p.interval = 0.95, n=100)
+    ellipse95.overlap<- maxLikOverlap(ellipse2, ellipse3, siber.example, p.interval = 0.95, n=100)
+    ellipse.posterior <- siberMVN(siber.example, parms, priors)
+    bayes95.overlap <-bayesianOverlap(ellipse2, ellipse3, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+    hist(bayes95.overlap[ ,3] ,10)
+    
+    bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+    hist(bayes.prop.95.over ,10) ##about 23%
+    
+    ##liver v mucus small
+    
+    sea.overlap <- maxLikOverlap(ellipse1, ellipse3, siber.example, p.interval = 0.95, n=100)
+    ellipse95.overlap<- maxLikOverlap(ellipse1, ellipse3, siber.example, p.interval = 0.95, n=100)
+    ellipse.posterior <- siberMVN(siber.example, parms, priors)
+    bayes95.overlap <-bayesianOverlap(ellipse1, ellipse3, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+    hist(bayes95.overlap[ ,3] ,10)
+    
+    bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+    hist(bayes.prop.95.over ,10) ##about 25% overlap 
+    
+    
+    
+    ##Within sizes -med
+    
+    ##liver small v muscle med
+    sea.overlap <- maxLikOverlap(ellipse4, ellipse5, siber.example, p.interval = 0.95, n=100)
+    ellipse95.overlap<- maxLikOverlap(ellipse4, ellipse2, siber.example, p.interval = 0.95, n=100)
+    ellipse.posterior <- siberMVN(siber.example, parms, priors)
+    bayes95.overlap <-bayesianOverlap(ellipse4, ellipse2, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+    hist(bayes95.overlap[ ,3] ,10)
+    
+    bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+    hist(bayes.prop.95.over ,10) ##about 32%
+    
+    ##Muscle v mucus med
+    sea.overlap <- maxLikOverlap(ellipse5, ellipse6, siber.example, p.interval = 0.95, n=100)
+    ellipse95.overlap<- maxLikOverlap(ellipse5, ellipse6, siber.example, p.interval = 0.95, n=100)
+    ellipse.posterior <- siberMVN(siber.example, parms, priors)
+    bayes95.overlap <-bayesianOverlap(ellipse5, ellipse6, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+    hist(bayes95.overlap[ ,3] ,10)
+    
+    bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+    hist(bayes.prop.95.over ,10) ##about 23%
+    
+    ##liver v mucus med
+    
+    sea.overlap <- maxLikOverlap(ellipse4, ellipse6, siber.example, p.interval = 0.95, n=100)
+    ellipse95.overlap<- maxLikOverlap(ellipse4, ellipse6, siber.example, p.interval = 0.95, n=100)
+    ellipse.posterior <- siberMVN(siber.example, parms, priors)
+    bayes95.overlap <-bayesianOverlap(ellipse4, ellipse6, ellipses.posterior, draws = 100, p.interval = 0.95, n=100)
+    hist(bayes95.overlap[ ,3] ,10)
+    
+    bayes.prop.95.over <- (bayes95.overlap[ , 3]/(bayes95.overlap[ , 2]+bayes95.overlap[ , 1]-bayes95.overlap[ , 3]))
+    hist(bayes.prop.95.over ,10) ##about 25% overlap 
+    
     
   } ## fold isotope by size SIBER comparison
 
