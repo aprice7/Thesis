@@ -181,7 +181,7 @@ my_clrs <- matrix(c("cyan1", "cyan1", "cyan1",
                     "coral1", "coral1", "coral1",
                     "coral1", "coral1", "coral1"), nrow = 3, ncol = 6)
 
-siberDensityPlot(SEA.B, xticklabels = colnames(group.ML), 
+Figure_7b <- siberDensityPlot(SEA.B, xticklabels = colnames(group.ML), 
                  xlab = c("Community (Site Type)| Group (Tissue Type)"),
                  ylab = expression("Standard Ellipse Area " ('\u2030' ^2) ),
                  bty = "L",
@@ -191,7 +191,7 @@ siberDensityPlot(SEA.B, xticklabels = colnames(group.ML),
 )
 legend("topright", legend = c("Artificial", "Natural"),fill=
        c("cyan1", "coral1"))
-dev.copy(png,'figures/SiteVTissue_SEAB.png', width=2000, height=1600, res=200) ; dev.off()
+dev.copy(png,'figures/Figure_7b.png', width=2000, height=1600, res=200) ; dev.off()
 # Add red x's for the ML estimated SEA-c
 points(1:ncol(SEA.B), group.ML[3,], col="red", pch = "x", lwd = 2)
 
@@ -577,7 +577,7 @@ If (fold) {
     
     ticknames=c("liver", "muscle", "mucus", "liver", "muscle", "mucus")
     
-    siberDensityPlot(SEA.B, xticklabels = ticknames, 
+    Figure_7a <- siberDensityPlot(SEA.B, xticklabels = ticknames, 
                      xlab = c("Community (Size)| Group (Isotope)"),
                      ylab = expression("Standard Ellipse Area " ('\u2030' ^2) ),
                      bty = "L",
@@ -590,8 +590,10 @@ If (fold) {
              c("blue", "red"))
     
     
-    #dev.copy(png,'figures/SIBER_SEA_Size.png', width=2000, height=1600, res=200) ; dev.off()
+    #dev.copy(png,'figures/Figure_7a.png', width=2000, height=1600, res=200) ; dev.off()
     
+    Figure7 <- ggarrange(Figure_7a, Figure_7b,ncol=1, nrow=2,
+              legend = "right")
     
     # Add red x's for the ML estimated SEA-c
     points(1:ncol(SEA.B), group.ML[3,], col="red", pch = "x", lwd = 2)
