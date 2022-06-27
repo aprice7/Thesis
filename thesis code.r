@@ -1356,7 +1356,7 @@ if (Fold){
   ###### Q1:Are SI values different at Location? or size### 
   elipse1 <- ggplot(bsb, aes(c13l, n15l, color=losiz))+labs(color="Location | Size")+
     labs(x=(expression("∂"^13*"C (‰)")),y=(expression("∂"^15*"N (‰)")))+
-    geom_point() +stat_ellipse()+
+    geom_point() +  xlim(-26, -13.5) + ylim(8,18)  + stat_ellipse()+
     ggtitle("∂ Values by Site Type, Fish Size, and Tissue Type", subtitle = "Liver")+
     theme(plot.title = element_text(hjust = 0.5))+theme(axis.text=element_text(size=18),
                                                         axis.title=element_text(size=18,face="bold"))+
@@ -1365,7 +1365,7 @@ if (Fold){
   
   elipse2 <- ggplot(bsb, aes(c13m, n15m, color=losiz))+labs(color="Location | Size")+
     labs(x=(expression("∂"^13*"C (‰)")),y=(expression("∂"^15*"N (‰)")))+
-    geom_point() +stat_ellipse()+
+    geom_point() + xlim(-26, -13.5) + ylim(8,18) +stat_ellipse()+
     ggtitle("", subtitle = "Muscle")+
     theme(plot.title = element_text(hjust = 0.5))+theme(axis.text=element_text(size=18),
                                                         axis.title=element_text(size=18,face="bold"))+
@@ -1374,7 +1374,7 @@ if (Fold){
   
   elipse3 <- ggplot(bsb, aes(c13s, n15s, color=losiz))+labs(color="Location | Size")+
     labs(x=(expression("∂"^13*"C (‰)")),y=(expression("∂"^15*"N (‰)")))+
-    geom_point() +stat_ellipse()+
+    geom_point() + xlim(-26, -13.5) + ylim(8,18) + stat_ellipse()+
     ggtitle("", subtitle = "Mucus")+
     theme(plot.title = element_text(hjust = 0.5))+theme(axis.text=element_text(size=18),
                                                         axis.title=element_text(size=18,face="bold"))+
