@@ -11,7 +11,7 @@ library(rjags)
 If (fold){
   
   ## I interpret the following analysis as showing that there are no significant differences amongst the two communities.
-  ## Based stronly on the graphical representations shown in the density plots
+  ## Based strongly on the graphical representations shown in the density plots
   
 If (fold){
 ##Compile and review the data setup - this should compare all three isotopes by group (Liv, Mus, or mucuS ) and community (artificial or natural)
@@ -51,13 +51,13 @@ alldata= merge(alldata, temp_s, all=TRUE)
 summary(alldata); dim(alldata)
 #View(alldata)
 
-} ##Fold data wrangling for isotope at locaiton type comparison
+} ##Fold data wrangling for isotope at location type comparison
 
 
 
 If (fold){
 
-# Create lists of plotting arguments to be passed onwards to each 
+# Create lists of plotting arguments to be passed on to each 
 # of the three plotting functions.
 community.hulls.args <- list(col = 1, lty = 1, lwd = 1)
 group.ellipses.args  <- list(n = 100, p.interval = 0.95, lty = 1, lwd = 2)
