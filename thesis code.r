@@ -1355,7 +1355,7 @@ plotSiberObject(siber.example,
 if (Fold){
   ###### Q1:Are SI values different at Location? or size### 
   elipse1 <- ggplot(bsb, aes(c13l, n15l, color=losiz))+labs(color="Location | Size")+
-    labs(x=(expression("∂"^13*"C (‰)")),y=(expression("∂"^15*"N (‰)")))+
+    labs(x=(expression(delta^13*"C (‰)")),y=(expression(delta^15*"N (‰)")))+
     geom_point() +  xlim(-26, -13.5) + ylim(8,18)  + stat_ellipse()+
     ggtitle("∂ Values by Site Type, Fish Size, and Tissue Type", subtitle = "Liver")+
     theme(plot.title = element_text(hjust = 0.5))+theme(axis.text=element_text(size=18),
@@ -1364,7 +1364,7 @@ if (Fold){
     theme(plot.subtitle=element_text(size=18))#+ theme(legend.position = "none") 
   
   elipse2 <- ggplot(bsb, aes(c13m, n15m, color=losiz))+labs(color="Location | Size")+
-    labs(x=(expression("∂"^13*"C (‰)")),y=(expression("∂"^15*"N (‰)")))+
+    labs(x=(expression(delta^13*"C (‰)")),y=(expression(delta^15*"N (‰)")))+
     geom_point() + xlim(-26, -13.5) + ylim(8,18) +stat_ellipse()+
     ggtitle("", subtitle = "Muscle")+
     theme(plot.title = element_text(hjust = 0.5))+theme(axis.text=element_text(size=18),
@@ -1373,7 +1373,7 @@ if (Fold){
     theme(plot.subtitle=element_text(size=18))+theme(legend.position = "none") 
   
   elipse3 <- ggplot(bsb, aes(c13s, n15s, color=losiz))+labs(color="Location | Size")+
-    labs(x=(expression("∂"^13*"C (‰)")),y=(expression("∂"^15*"N (‰)")))+
+    labs(x=(expression(delta^13*"C (‰)")),y=(expression(delta^15*"N (‰)")))+
     geom_point() + xlim(-26, -13.5) + ylim(8,18) + stat_ellipse()+
     ggtitle("", subtitle = "Mucus")+
     theme(plot.title = element_text(hjust = 0.5))+theme(axis.text=element_text(size=18),
@@ -1432,16 +1432,16 @@ if (Fold){
   ##Predator vs. Prey from trawls isotope figures
   consumer1 <-ggplot(isotope, aes(c13m, n15m, color=consumer)) +
     geom_point() +
-    stat_ellipse()+ggtitle("∂ Value by Consumer",subtitle = "Muscle")+labs(color="Consumer")+
-    labs(x=(expression("∂"^13*"C (‰)")),y=(expression("∂"^15*"N (‰)")))+
+    stat_ellipse()+ xlim(-30, 3) + ylim(6,18) +ggtitle("∂ Value by Consumer",subtitle = "Muscle")+labs(color="Consumer")+
+    labs(x=(expression(delta^13*"C (‰)")),y=(expression(delta^15*"N (‰)")))+
     theme(plot.title = element_text(hjust = 0.5))+
     theme(axis.text=element_text(size=18, face="bold"))+
     theme(legend.text=element_text(size=14))+theme(legend.title=element_text(size=18))+
     theme(plot.subtitle=element_text(size=18))
   
   consumer2<- ggplot(isotope, aes(c13l, n15l, color=consumer)) +
-    geom_point() +
-    labs(x=(expression("∂"^13*"C (‰)")),y=(expression("∂"^15*"N (‰)")))+
+    geom_point() + xlim(-30, 3) + ylim(6,18) +
+    labs(x=(expression(delta^13*"C (‰)")),y=(expression(delta^15*"N (‰)")))+
     stat_ellipse()+ggtitle("", subtitle = "Liver")+
     theme(plot.title = element_text(hjust = 0.5))+
     theme(axis.text=element_text(size=18, face="bold"))+
@@ -1449,8 +1449,8 @@ if (Fold){
     theme(plot.subtitle=element_text(size=18))
   
   consumer3 <- ggplot(isotope, aes(c13s, n15s, color=consumer)) +
-    geom_point() +
-    labs(x=(expression("∂"^13*"C (‰)")),y=(expression("∂"^15*"N (‰)")))+
+    geom_point() + xlim(-30, 3) + ylim(6,18) +
+    labs(x=(expression(delta^13*"C (‰)")),y=(expression(delta^15*"N (‰)")))+
     stat_ellipse()+ggtitle("",subtitle = "Mucus")+
     theme(plot.title = element_text(hjust = 0.5))+
     theme(axis.text=element_text(size=18, face="bold"))+
@@ -1460,7 +1460,7 @@ if (Fold){
   
   Figure6 <- ggarrange(consumer1, consumer2, consumer3,ncol=1, nrow=3,
                        common.legend = TRUE, legend = "right")
-  dev.copy(png,'figures/Figure6.png', width=2000, height=5000, res=200) ; dev.off()
+  dev.copy(png,'figures/Figure6_revised.png', width=2000, height=5000, res=200) ; dev.off()
 }##Fold Predator vs. Prey isotope signatures/ Figure6
 if (Fold){
   ##Nitrogen in mucus by Consumer Level###
