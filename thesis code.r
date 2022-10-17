@@ -4,7 +4,7 @@
 diets.original <- read.csv("data/Working_United.csv")
 isotope.original <- read.csv("data/isotopedata.csv")
 
-##Needed packages.  Uncomment if needed.
+##Needed packages.  
 ##install.packages(c("FSA","SIBER", "FSAdata", "ggrepel", "nlstools", "plotrix", "Rmisc", "siar", "tidyverse"))
 #library(SIBER)
 library(dplyr)
