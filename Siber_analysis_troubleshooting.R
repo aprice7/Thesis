@@ -79,25 +79,6 @@ plotSiberObject(siber.example,
 )
 
 
-# community.hulls.args <- list(col = 1, lty = 1, lwd = 1)
-# group.ellipses.args  <- list(n = 100, p.interval = 0.95, lty = 1, lwd = 2)
-# group.hull.args      <- list(lty = 2, col = "grey20")
-# 
-# # this time we will make the points a bit smaller by 
-# # cex = 0.5
-# plotSiberObject(siber.example,
-#                 ax.pad = 2, 
-#                 hulls = F, community.hulls.args, 
-#                 ellipses = F, group.ellipses.args,
-#                 group.hulls = F, group.hull.args,
-#                 bty = "L",
-#                 iso.order = c(1,2),
-#                 xlab=expression({delta}^13*C~'\u2030'),
-#                 ylab=expression({delta}^15*N~'\u2030'),
-#                 cex = 0.5
-# )
-
-
 
 # Calculate summary statistics for each group: TA, SEA and SEAc
 group.ML <- groupMetricsML(siber.example)
@@ -191,13 +172,13 @@ Figure_7b <- siberDensityPlot(SEA.B, xticklabels = colnames(group.ML),
 
 
 Figure_7b <- siberDensityPlot(SEA.B, xticklabels = colnames(group.ML), 
-                 xlab = c("Community (Site Type)| Group (Tissue Type)"),
+                 xlab = c("Community (Habitat Type)| Group (Tissue Type)"),
                  ylab = expression("Standard Ellipse Area " ('\u2030' ^2) ),
                  bty = "L",
                  las = 1,
                  main = "SIBER SEA.B for Each Group",
-                 clr=my_clrs
-)
+                 clr=my_clrs)
+
 legend("topright", legend = c("Artificial", "Natural"),fill=
        c("cyan1", "coral1"))
 dev.copy(png,'figures/Figure_7b.png', width=2000, height=1600, res=200) ; dev.off()
