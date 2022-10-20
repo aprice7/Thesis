@@ -13,8 +13,7 @@ library(tidyverse)
 library(Rmisc)
 library(gridExtra)
 
-####Order and wrangle the dataset#######
-Fold=TRUE ##dummy varialbe that allows us to collapse long sections of code
+Fold=TRUE ##dummy variable that allows us to collapse long sections of code
 if (Fold) {
   
   ##Wrangle and merge the data
@@ -35,9 +34,9 @@ if (Fold) {
   
   master_df <- select(master_df, -(contains(".y")))
   master_df <- rename(master_df, c("year.x" = "year", "location.x"="location", "month.x"="month"))
-}##Fold Data Inputs - Does not include Figure 1 mapping data
+
 ######Wrangle the Data
-if (Fold) {
+
   # #Add some extra columns, formatting and subsetting the data for basic data interrogation
   # 
   # ##This adds a "natural" or "artificial" designation
@@ -46,7 +45,9 @@ if (Fold) {
   # basics$location_type<- ifelse(basics$location=="NB_ONE", "N",
   #                               ifelse(basics$location=="NB_TWO","N","A"))
   # 
-  ##### INTRO  QUESTIONS -Comparing UMES and NOAA data#####
+  
+  ##### INTRO  QUESTIONS -Comparing UMES and NOAA data
+  
   ###Wrangling###
   basics.n <- subset(master_df,select = -c(2:3,6,12:13,37:42))
   basics.n$source <- ifelse(basics.n$geoarea=="", "ANDRE", "NOAA")
@@ -95,11 +96,12 @@ if (Fold) {
   table(basics.n$geoarea)  ##shows umes vs. noaa
   
 } ##Fold data wrangling
+
 #save.image(file="data/wrangled_for_results.Rdata")
 
 #######Results##
+#load("data/wrangled_for_results.Rdata")  ###use this line to load the wangled data
 
-#load("data/wrangled_for_results.Rdata")  ###use this line to load everything you'll need from above
 #######Fish Sizes/ Fish by source/ Figure2####
 if (Fold){
   ##mean sizes of males and females by source
@@ -531,7 +533,7 @@ if (Fold){
   bi_plot_n+theme(axis.text.x=element_text(angle = 90, hjust=1))+theme(text = element_text(size=5))
   grid.arrange(bi_plot_a, bi_plot_n, ncol=1, nrow=2)
   
-  View(bi.n)
+  #View(bi.n)
   ##The following tables show the intricate details that the plots can't
   table(bi.a$otherpynam)  ### basically just bivalves
   table(bi.n$otherpynam)  ### bivalves and other things
@@ -572,6 +574,9 @@ if (Fold){
   table(fish.a$otherpynam)  ### basically just bony fish
   table(fish.n$otherpynam)  ### small bony fish
 } ##end "deep in the weeds" stomach code - run (always), close figs, and ignore if needed
+##save.image(file="data_wrangled_for_diet_analysis.Rdata")
+
+##load("data_wrangled_for_diet_analysis.Rdata")
 if(Fold){
   ####CHI-Squares for diet and location####
   diet_test <- filter(diets.n, source=="ANDRE")
