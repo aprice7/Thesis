@@ -174,15 +174,8 @@ ellipses.posterior <- siberMVN(siber.example, parms, priors)
 # calculate the SEA.B for each group.
 SEA.B <- siberEllipses(ellipses.posterior)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 ticknames=c("liver", "muscle", "mucus", "liver", "muscle", "mucus")
 
-
-=======
->>>>>>> a132e7055bfc3d068eb2eb1dcde0390bb0d3d986
-=======
->>>>>>> 6da11d9ab2bb18092d0dcf922c6fcb98e16c9938
 my_clrs <- matrix(c("cyan1", "cyan1", "cyan1",
                     "cyan1", "cyan1", "cyan1",
                     "cyan1", "cyan1", "cyan1",
@@ -190,18 +183,15 @@ my_clrs <- matrix(c("cyan1", "cyan1", "cyan1",
                     "coral1", "coral1", "coral1",
                     "coral1", "coral1", "coral1"), nrow = 3, ncol = 6)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 Figure_7b <- siberDensityPlot(SEA.B, xticklabels = ticknames, 
-                 xlab = c("Community (Site Type) | Group (Tissue Type)"),
-=======
+                 xlab = c("Community (Site Type) | Group (Tissue Type)"))
+
+Figure_7b <- siberDensityPlot(SEA.B, xticklabels = colnames(group.ML), 
+                 xlab = c("Community (Site Type)| Group (Tissue Type)"))
+
+
 Figure_7b <- siberDensityPlot(SEA.B, xticklabels = colnames(group.ML), 
                  xlab = c("Community (Site Type)| Group (Tissue Type)"),
->>>>>>> a132e7055bfc3d068eb2eb1dcde0390bb0d3d986
-=======
-Figure_7b <- siberDensityPlot(SEA.B, xticklabels = colnames(group.ML), 
-                 xlab = c("Community (Site Type)| Group (Tissue Type)"),
->>>>>>> 6da11d9ab2bb18092d0dcf922c6fcb98e16c9938
                  ylab = expression("Standard Ellipse Area " ('\u2030' ^2) ),
                  bty = "L",
                  las = 1,
@@ -213,9 +203,6 @@ legend("topright", legend = c("Artificial", "Natural"),fill=
 dev.copy(png,'figures/Figure_7b.png', width=2000, height=1600, res=200) ; dev.off()
 # Add red x's for the ML estimated SEA-c
 points(1:ncol(SEA.B), group.ML[3,], col="red", pch = "x", lwd = 2)
-
-<<<<<<< HEAD
-<<<<<<< HEAD
 
 
 
@@ -233,20 +220,6 @@ points(1:ncol(SEA.B), group.ML[3,], col="red", pch = "x", lwd = 2)
 
 
 
-
-
-
-
-
-
-
-
-
-
-=======
->>>>>>> a132e7055bfc3d068eb2eb1dcde0390bb0d3d986
-=======
->>>>>>> 6da11d9ab2bb18092d0dcf922c6fcb98e16c9938
 # Calculate some credible intervals 
 cr.p <- c(0.95, 0.99) # vector of quantiles
 
@@ -303,13 +276,6 @@ points(1:6, comm2.layman.ml$metrics, col = "red", pch = "x", lwd = 2)
 # single matrix using cbind() and plot them together on one graph.
 # --------------------------------------
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-=======
->>>>>>> a132e7055bfc3d068eb2eb1dcde0390bb0d3d986
-=======
->>>>>>> 6da11d9ab2bb18092d0dcf922c6fcb98e16c9938
 # go back to a 1x1 panel plot
 par(mfrow=c(1,1))
 
@@ -637,25 +603,18 @@ If (fold) {
     ticknames=c("liver", "muscle", "mucus", "liver", "muscle", "mucus")
     
     Figure_7a <- siberDensityPlot(SEA.B, xticklabels = ticknames, 
-<<<<<<< HEAD
-<<<<<<< HEAD
                      xlab = c("Community (Size) | Group (Isotope)"),
                      ylab = expression("Standard Ellipse Area " ('\u2030' ^2) ),
                      bty = "L",
                      las = 1,
-                     main = "SIBER SEA.B for Each Group",
-=======
-=======
->>>>>>> 6da11d9ab2bb18092d0dcf922c6fcb98e16c9938
+                     main = "SIBER SEA.B for Each Group")
+
+    Figure_7a <- siberDensityPlot(SEA.B, xticklabels = ticknames, 
                      xlab = c("Community (Size)| Group (Isotope)"),
                      ylab = expression("Standard Ellipse Area " ('\u2030' ^2) ),
                      bty = "L",
                      las = 1,
                      main = "SIBER ellipses on each group",
-<<<<<<< HEAD
->>>>>>> a132e7055bfc3d068eb2eb1dcde0390bb0d3d986
-=======
->>>>>>> 6da11d9ab2bb18092d0dcf922c6fcb98e16c9938
                      clr = my_clrs,
                      pch= 2
     )
