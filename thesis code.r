@@ -128,7 +128,7 @@ if (Fold){
   
   Figure2 <- grid.arrange(plot3a, plot3b); Figure2
   # copy figure2 to .PNG file
-  # dev.copy(png,'figures/Figure2.png', width=2000, height=1600, res=200) ; dev.off()
+   #dev.copy(png,'figures/Figure2.png', width=2000, height=1600, res=200) ; dev.off()
 } ##Fold Proportions and Figure 2 Plotting
 #######Statistics for age at habitat type########
 if(Fold){
@@ -574,9 +574,11 @@ if (Fold){
   table(fish.a$otherpynam)  ### basically just bony fish
   table(fish.n$otherpynam)  ### small bony fish
 } ##end "deep in the weeds" stomach code - run (always), close figs, and ignore if needed
+
 ##save.image(file="data_wrangled_for_diet_analysis.Rdata")
 
 ##load("data_wrangled_for_diet_analysis.Rdata")
+
 if(Fold){
   ####CHI-Squares for diet and location####
   diet_test <- filter(diets.n, source=="ANDRE")
