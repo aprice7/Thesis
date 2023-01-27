@@ -590,12 +590,13 @@ If (fold) {
                      las = 1,
                      main = "SIBER SEA.B for Each Group")
 
+    
     Figure_7a <- siberDensityPlot(SEA.B, xticklabels = ticknames, 
                      xlab = c("Community (Size)| Group (Isotope)"),
                      ylab = expression("Standard Ellipse Area " ('\u2030' ^2) ),
                      bty = "L",
                      las = 1,
-                     main = "SIBER ellipses on each group",
+                     main = "SIBER SEA.B for Each Group",
                      clr = my_clrs,
                      pch= 2
     )
@@ -603,18 +604,8 @@ If (fold) {
              c("blue", "red"))
     
     
-    #dev.copy(png,'figures/Figure_7a.png', width=2000, height=1600, res=200) ; dev.off()
+    dev.copy(png,'figures/Figure_7a.png', width=2000, height=1600, res=200) ; dev.off()
     
-<<<<<<< HEAD
-<<<<<<< HEAD
-    Figure <- ggarrange(Figure_7a, Figure_7b,ncol=1, nrow=2,
-=======
-    Figure7 <- ggarrange(Figure_7a, Figure_7b,ncol=1, nrow=2,
->>>>>>> a132e7055bfc3d068eb2eb1dcde0390bb0d3d986
-=======
-    Figure7 <- ggarrange(Figure_7a, Figure_7b,ncol=1, nrow=2,
->>>>>>> 6da11d9ab2bb18092d0dcf922c6fcb98e16c9938
-              legend = "right")
     
     # Add red x's for the ML estimated SEA-c
     points(1:ncol(SEA.B), group.ML[3,], col="red", pch = "x", lwd = 2)
